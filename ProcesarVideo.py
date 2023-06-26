@@ -7,6 +7,7 @@ import torchvision.models as models
 from PIL import Image
 
 # Cargar el modelo ResNet18 entrenado
+
 modelResNet = models.resnet18(pretrained=False)
 num_features = modelResNet.fc.in_features
 modelResNet.fc = nn.Linear(num_features, 2)
