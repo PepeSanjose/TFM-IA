@@ -12,3 +12,5 @@ https://colab.research.google.com/drive/1Cr3UDcqz5Zf9xxu40RTkTZXjYx5Kmth4#scroll
 
 *Para poder instalar Dlib es necesario instalar C++. Para ello se recomienda usar el asistente de Visual Studio:https://visualstudio.microsoft.com/es/downloads/
 
+## Ejecución de la aplicación
+Para poder ejecutar la aplicación debe clonar o descargarse el repositorio y ejecutar el fichero main.py
