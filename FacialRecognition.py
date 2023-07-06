@@ -9,6 +9,18 @@ threshold = 0.5
 face_detector = dlib.get_frontal_face_detector()
 landmark_predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat") 
 
+def draw_face_rectangle(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    faces = face_detector(gray)
+
+    if len(faces) > 0:
+        face = faces[0]  # Get the first detected face
+        (x, y, w, h) = (face.left(), face.top(), face.width(), face.height())
+        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+    return image
+
+
 def eyes_closed(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     faces = face_detector(gray)
@@ -49,10 +61,6 @@ def calculate_eye_status(eye):
     eye_rect = cv2.boundingRect(eye_hull)
     eye_rect_area = eye_rect[2] * eye_rect[3]
     eye_aspect_ratio = eye_area / eye_rect_area
-
-    #print(eye_rect_area)
-    #print(eye_aspect_ratio)
-    print(f"*** eye_hull: {eye_hull}, eye_area: {eye_area}, eye_rect_area: {eye_rect_area}, eye_aspect_ratio: {eye_aspect_ratio}")
 
     if eye_aspect_ratio < threshold:
         return "closed"
