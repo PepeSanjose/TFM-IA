@@ -14,7 +14,7 @@ import pygame
 modelResNet = models.resnet18(pretrained=False)
 num_features = modelResNet.fc.in_features
 modelResNet.fc = nn.Linear(num_features, 2)
-modelResNet.load_state_dict(torch.load('Modelo/ResNet.pth',  map_location=torch.device('cpu')))
+modelResNet.load_state_dict(torch.load('Modelo/ResNet7.pth',  map_location=torch.device('cpu')))
 modelResNet.eval()
 
 
@@ -53,6 +53,7 @@ def mostrar_webcam():
     drowsy_threshold = 4
     # Contadores
     drowsy_count = 0
+    num_alerts = 0
 
     cap = cv2.VideoCapture(0)
 
@@ -62,7 +63,7 @@ def mostrar_webcam():
 
     # Bucle principal
     while True:
-        time.sleep(1)
+        time.sleep(0.3)
         # Leer el fotograma actual de la cámara
         ret, frame = cap.read()
 
@@ -76,19 +77,23 @@ def mostrar_webcam():
 
         cv2.imshow("Webcam", frame)
 
-        #TO DO: LLAMAR A LA FUNCION DE ESTHER
-        #predicted_label = FacialRecognition.eyes_closed(frame)
+        ojos_cerrados = FacialRecognition.eyes_closed(frame)
         
         predicted_label = process_image(frame)
 
         print(f"El valor de predicted_label es:{predicted_label}")
 
-        if predicted_label ==1:  # Clase "Drowsy"
+        if predicted_label ==1 or ojos_cerrados:  # Clase "Drowsy"
             drowsy_count += 1
             print(f"Ha cerrado los ojos, :{drowsy_count}")
             if drowsy_count >= drowsy_threshold: 
+                print("Alerta de somnolencia")
+                reproducir_sonido("Sonidos/alert.mp3")
+                num_alerts += 1
+            if num_alerts >= 3:
+                print("Detener el vehículo, se está quedando dormido")
                 reproducir_sonido("Sonidos/alert-long.mp3")
-
+                num_alerts = 0
         else:
             drowsy_count = 0    
         
