@@ -48,7 +48,7 @@ def process_image(image):
 def mostrar_webcam():
     # Crear un objeto de captura de video
     
-  
+    print("Sistema de Alerta por somnolencia activado")
     #num_consecutive_frames = 7
     drowsy_threshold = 4
     # Contadores
@@ -81,19 +81,18 @@ def mostrar_webcam():
         
         predicted_label = process_image(frame)
 
-        print(f"El valor de predicted_label es:{predicted_label}")
-
         if predicted_label ==1 or ojos_cerrados:  # Clase "Drowsy"
             drowsy_count += 1
-            print(f"Ha cerrado los ojos, :{drowsy_count}")
             if drowsy_count >= drowsy_threshold: 
                 print("Alerta de somnolencia")
                 reproducir_sonido("Sonidos/alert.mp3")
                 num_alerts += 1
-            if num_alerts >= 3:
+                time.sleep(1)
+            if num_alerts >= 4:
                 print("Detener el vehículo, se está quedando dormido")
                 reproducir_sonido("Sonidos/alert-long.mp3")
                 num_alerts = 0
+                time.sleep(15)
         else:
             drowsy_count = 0    
         
