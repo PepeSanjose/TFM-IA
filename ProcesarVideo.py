@@ -10,20 +10,11 @@ import FacialRecognition
 import pygame
 
 # Cargar el modelo ResNet18 entrenado
-
 modelResNet = models.resnet18(pretrained=False)
 num_features = modelResNet.fc.in_features
 modelResNet.fc = nn.Linear(num_features, 2)
 modelResNet.load_state_dict(torch.load('Modelo/ResNet7.pth',  map_location=torch.device('cpu')))
 modelResNet.eval()
-
-
-def reproducir_sonido(ruta_archivo):
-    pygame.mixer.init()
-    pygame.mixer.music.load(ruta_archivo)
-    pygame.mixer.music.play()
-
-# Llamar a la función para reproducir un archivo de sonido
 
 # Función para procesar una imagen y obtener la predicción
 def process_image(image):
@@ -37,7 +28,6 @@ def process_image(image):
     # Convertir la imagen de numpy.ndarray a torch.Tensor
     input_img = preprocess(Image.fromarray(image)).unsqueeze(0)
 
-
     # Realizar la predicción
     with torch.no_grad():
         outputs = modelResNet(input_img)
@@ -46,12 +36,9 @@ def process_image(image):
     return predicted.item()
 
 def mostrar_webcam():
-    # Crear un objeto de captura de video
-    
     print("Sistema de Alerta por somnolencia activado")
-    #num_consecutive_frames = 7
+    # Contadores y
     drowsy_threshold = 4
-    # Contadores
     drowsy_count = 0
     num_alerts = 0
 
@@ -60,25 +47,16 @@ def mostrar_webcam():
     # Comprobar si la cámara está abierta correctamente
     if not cap.isOpened():
         raise IOError("No se puede abrir la cámara")
-
     # Bucle principal
     while True:
         time.sleep(0.3)
         # Leer el fotograma actual de la cámara
         ret, frame = cap.read()
-
-        # Comprobar si se ha leído correctamente el fotograma
-        if not ret:
-            break
-
-        # Mostrar el fotograma en una ventana llamada "Webcam"
-
-        image = FacialRecognition.draw_face_rectangle(frame)
-
-        cv2.imshow("Webcam", frame)
-
-        ojos_cerrados = FacialRecognition.eyes_closed(frame)
         
+        FacialRecognition.draw_face_rectangle(frame)
+        cv2.imshow("Webcam", frame)
+        #Predicciónes
+        ojos_cerrados = FacialRecognition.eyes_closed(frame)
         predicted_label = process_image(frame)
 
         if predicted_label ==1 or ojos_cerrados:  # Clase "Drowsy"
@@ -87,12 +65,11 @@ def mostrar_webcam():
                 print("Alerta de somnolencia")
                 reproducir_sonido("Sonidos/alert.mp3")
                 num_alerts += 1
-                time.sleep(1)
             if num_alerts >= 4:
                 print("Detener el vehículo, se está quedando dormido")
                 reproducir_sonido("Sonidos/alert-long.mp3")
                 num_alerts = 0
-                time.sleep(15)
+         
         else:
             drowsy_count = 0    
         
@@ -104,4 +81,8 @@ def mostrar_webcam():
     cap.release()
     cv2.destroyAllWindows()
 
+def reproducir_sonido(ruta_archivo):
+    pygame.mixer.init()
+    pygame.mixer.music.load(ruta_archivo)
+    pygame.mixer.music.play()
 # Llamar al método para mostrar la webcam en tiempo real
