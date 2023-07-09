@@ -13,7 +13,7 @@ class App(customtkinter.CTk):
 
         #Configurar ventana ---------------------------------------------------------
         self.title("Sistema de detección de somnolencia")
-        self.geometry("1200x540")
+        self.geometry("1000x500")
         self.grid_columnconfigure((0, 1), weight=1)
 
         #Imagen de fondo ------------------------------------------------------------
@@ -28,9 +28,6 @@ class App(customtkinter.CTk):
         self.button.place(relx=0.5, rely=0.5, anchor=customtkinter.CENTER)
 
     def button_callback(self):
-        #ProcesarVideo.Simulator()
-        #winsound.PlaySound("Sonidos/alert.mp3", winsound.SND_FILENAME)
-        #ocultar boton  
         self.button.place_forget()
         ProcesarVideo.mostrar_webcam()
 
